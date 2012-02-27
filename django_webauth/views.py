@@ -15,7 +15,7 @@ class LoginView(HTMLView):
         user = authenticate(username=username)
         login(request, user)
 
-        return HttpResponseSeeOther(request.GET.get('next', settings.LOGIN_REDIRECT_VIEW))
+        return HttpResponseSeeOther(request.GET.get('next', settings.LOGIN_REDIRECT_URL))
 
 class LogoutView(HTMLView):
     def get(self, request):

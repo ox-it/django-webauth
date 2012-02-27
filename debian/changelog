@@ -1,3 +1,9 @@
+python-django-webauth (0.1.4) unstable; urgency=low
+
+  * Fixed typo on LOGIN_REDIRECT_URL.
+
+ -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Mon, 27 Feb 2012 13:44:28 +0000
+
 python-django-webauth (0.1.3) unstable; urgency=low
 
   * Added dependency on python-ldap.
