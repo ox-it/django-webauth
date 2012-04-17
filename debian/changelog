@@ -1,3 +1,10 @@
+python-django-webauth (0.2) unstable; urgency=low
+
+  * Fixed LogoutView
+  * Implemented ?next= handling
+
+ -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Tue, 17 Apr 2012 10:58:32 +0100
+
 python-django-webauth (0.1.4) unstable; urgency=low
 
   * Fixed typo on LOGIN_REDIRECT_URL.
