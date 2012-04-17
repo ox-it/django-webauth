@@ -1,6 +1,6 @@
 {% extends "webauth/base.html" %}
 
-{% block login_next_url %}/{% endblock %}
+{% block login_next_url %}{{ login_redirect_url }}{% endblock %}
 
 {% block content %}
 

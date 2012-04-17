@@ -31,6 +31,7 @@ class LogoutView(HTMLView):
     def get(self, request):
         context = {
             'was_webauth': request.session.get(BACKEND_SESSION_KEY) == 'django_webauth.backends.WebauthBackend',
+            'login_redirect_url': settings.LOGIN_REDIRECT_URL,
         }
         logout(request)
         return self.render(request, context, 'webauth/logged_out')
