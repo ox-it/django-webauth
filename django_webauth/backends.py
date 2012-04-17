@@ -43,6 +43,12 @@ class WebauthBackend(object):
             if match:
                 groups.add('affiliation:%s' % match.group(1))
 
+        # As per http://www.oucs.ox.ac.uk/services/oak/sp/ldap/index.xml?ID=recommendations
+        # if someone has an eduPersonAffiliation of 'member', they are a member
+        # of the University
+        if 'member' in person.get('eduPersonAffiliation'):
+            groups.add('member')
+
         return set(Group.objects.get_or_create(name=name)[0] for name in groups)
 
     def get_user(self, user_id):
