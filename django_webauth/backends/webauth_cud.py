@@ -30,8 +30,10 @@ class WebauthCUDBackend(object):
         user.last_name = attributes['cud:cas:lastname']
         user.email = attributes['cud:cas:oxford_email']
         groups = set(Group.objects.get_or_create(name=name) for name in attributes['cud:cas:current_affiliation'])
+        user.groups = groups
         user.save()
         user.backend = 'django_webauth.backends.webauth_cud.WebauthCUDBackend'
+        user.cud_attributes = attributes
         return user
 
     def get_user(self, user_id):
