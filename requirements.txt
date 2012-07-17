@@ -1,1 +1,2 @@
 django-conneg>=0.6
+urllib2_kerberos==0.1.6

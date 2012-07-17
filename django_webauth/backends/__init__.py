@@ -1,0 +1,1 @@
+from webauth_ldap import WebauthLDAPBackend as WebauthBackend
