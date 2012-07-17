@@ -21,7 +21,7 @@ class WebauthCUDBackend(object):
         query = urlencode(query)
         url = "%s?%s" % (self.cud_endpoint, query)
         cud_data = json.load(opener.open(url))
-        assert len(cud_data['cudSubjects']) == 0
+        assert len(cud_data['cudSubjects']) == 1
         subject = cud_data['cudSubjects'][0]
         attributes = {}
         for attr in subject['attributes']:
