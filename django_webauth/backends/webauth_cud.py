@@ -15,7 +15,6 @@ class WebauthCUDBackend(object):
         self.cud_endpoint = cud_endpoint
 
     def authenticate(self, username):
-        logger.debug("Starting authentication")
         user, _ = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
         opener = urllib2.build_opener()
         opener.add_handler(HTTPKerberosAuthHandler())
@@ -34,14 +33,12 @@ class WebauthCUDBackend(object):
         user.first_name = attributes['cud:cas:firstname']
         user.last_name = attributes['cud:cas:lastname']
         user.email = attributes['cud:cas:oxford_email']
-        groups = set(Group.objects.get_or_create(name=name) for name in attributes['cud:cas:current_affiliation'])
-        user.groups = groups
+        for name in attributes['cud:cas:current_affiliation']:
+            group, created = Group.objects.get_or_create(name=name)
+            user.groups.add(group)
         user.save()
         user.backend = 'django_webauth.backends.webauth_cud.WebauthCUDBackend'
         user.cud_attributes = attributes
-        logger.debug("Completed authentication")
-        logger.debug("User object: %s" % dir(user))
-        logger.debug("User attributes: %s" % user.cud_attributes)
         return user
 
     def get_user(self, user_id):
