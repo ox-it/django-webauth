@@ -1,3 +1,4 @@
+import logging
 import urllib2
 import json
 
@@ -6,11 +7,15 @@ from urllib2_kerberos import HTTPKerberosAuthHandler
 from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
 
 
+logger = logging.getLogger(__name__)
+
+
 class WebauthCUDBackend(object):
     def __init__(self, cud_endpoint="https://ws.cud.ox.ac.uk/cudws/rest/search"):
         self.cud_endpoint = cud_endpoint
 
     def authenticate(self, username):
+        logger.debug("Starting authentication")
         user, _ = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
         opener = urllib2.build_opener()
         opener.add_handler(HTTPKerberosAuthHandler())
@@ -34,9 +39,13 @@ class WebauthCUDBackend(object):
         user.save()
         user.backend = 'django_webauth.backends.webauth_cud.WebauthCUDBackend'
         user.cud_attributes = attributes
+        logger.debug("Completed authentication")
+        logger.debug("User object: %s" % dir(user))
+        logger.debug("User attributes: %s" % user.cud_attributes)
         return user
 
     def get_user(self, user_id):
+        logger.info("Called get_user for user_id: %s" % user_id)
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
