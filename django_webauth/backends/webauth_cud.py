@@ -15,7 +15,11 @@ class WebauthCUDBackend(object):
         self.cud_endpoint = cud_endpoint
 
     def authenticate(self, username):
-        user, _ = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
+        user, created = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
+        if created:
+            logger.info("Created user: (%s - id:%s)" % (username, user.id))
+        else:
+            logger.info("User logged in: (%s - id:%s)" % (username, user.id))
         opener = urllib2.build_opener()
         opener.add_handler(HTTPKerberosAuthHandler())
         query = {'q': 'cud\:cas\:sso_username:%s' % username,
@@ -42,7 +46,6 @@ class WebauthCUDBackend(object):
         return user
 
     def get_user(self, user_id):
-        logger.info("Called get_user for user_id: %s" % user_id)
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
