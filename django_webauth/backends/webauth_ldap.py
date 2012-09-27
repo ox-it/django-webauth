@@ -5,7 +5,7 @@ import re
 from django.conf import settings
 from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
 
-class WebauthBackend(object):
+class WebauthLDAPBackend(object):
     def authenticate(self, username):
         user, _ = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
         
