@@ -1,10 +1,8 @@
 import logging
-import urllib2
-import json
+import requests
 
-from urllib import urlencode
-from urllib2_kerberos import HTTPKerberosAuthHandler
 from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
+from requests.auth import HTTPKerberosAuth
 
 
 logger = logging.getLogger(__name__)
@@ -20,15 +18,11 @@ class WebauthCUDBackend(object):
             logger.info("Created user: (%s - id:%s)" % (username, user.id))
         else:
             logger.info("User logged in: (%s - id:%s)" % (username, user.id))
-        opener = urllib2.build_opener()
-        opener.add_handler(HTTPKerberosAuthHandler())
         query = {'q': 'cud\:cas\:sso_username:%s' % username,
                 'format': 'json',
                 'history': 'n',
                 }
-        query = urlencode(query)
-        url = "%s?%s" % (self.cud_endpoint, query)
-        cud_data = json.load(opener.open(url))
+        cud_data = requests.get(self.cud_endpoint, params=query, auth=HTTPKerberosAuth()).json
         assert len(cud_data['cudSubjects']) == 1
         subject = cud_data['cudSubjects'][0]
         attributes = {}
