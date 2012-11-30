@@ -1,9 +1,12 @@
 import ldap, ldap.sasl
+import logging
 import os
 import re
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
+
+logger = logging.getLogger(__name__)
 
 class WebauthLDAPBackend(object):
     def authenticate(self, username):
@@ -22,9 +25,15 @@ class WebauthLDAPBackend(object):
             return None
         person = results[0][1]
 
-        user.first_name = person['givenName'][0]
-        user.last_name = person['sn'][0]
-        user.email = person['mail'][0]
+        for name, key in (('first_name', 'givenName'),
+                          ('last_name', 'sn'),
+                          ('email', 'mail')):
+            try:
+                setattr(user, name, person[key][0])
+            except KeyError, e:
+                setattr(user, name, '')
+                logger.warning("User %s doesn't have a %s", username, key)
+
         user.groups = self.get_groups(user, person)
 
         user.save()
