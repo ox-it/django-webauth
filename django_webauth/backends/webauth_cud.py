@@ -1,6 +1,7 @@
 import logging
 import requests
 
+from django.conf import settings
 from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
 from requests.auth import HTTPKerberosAuth
 
@@ -9,8 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class WebauthCUDBackend(object):
-    def __init__(self, cud_endpoint="https://ws.cud.ox.ac.uk/cudws/rest/search"):
-        self.cud_endpoint = cud_endpoint
+    def __init__(self):
+        self.cud_endpoint = getattr(settings, 'WEBAUTH_CUD_ENDPOINT',
+                "https://ws.cud.ox.ac.uk/cudws/rest/search")
 
     def authenticate(self, username):
         user, created = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})

@@ -1,6 +1,6 @@
-import ldap, ldap.sasl
+import ldap
+import ldap.sasl
 import logging
-import os
 import re
 
 from django.conf import settings
@@ -8,12 +8,16 @@ from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
 
 logger = logging.getLogger(__name__)
 
+
 class WebauthLDAPBackend(object):
+    def __init__(self):
+        self.ldap_endpoint = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
+                'ldap://ldap.oak.ox.ac.uk:389')
+
     def authenticate(self, username):
         user, _ = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
-        
         auth = ldap.sasl.gssapi('')
-        oakldap = ldap.initialize('ldap://ldap.oak.ox.ac.uk:389')
+        oakldap = ldap.initialize(self.ldap_endpoint)
         oakldap.start_tls_s()
         oakldap.sasl_interactive_bind_s('', auth)
 
