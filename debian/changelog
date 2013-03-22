@@ -1,8 +1,9 @@
-python-django-webauth (0.3.1) unstable; urgency=low
+python-django-webauth (0.3.2) unstable; urgency=low
 
   * Templates now being distrubuted by setup.py
+  * Title added to logged_out template
 
- -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Fri, 22 Mar 2012 14:58:45 +0000
+ -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Fri, 22 Mar 2012 15:52:37 +0000
 
 python-django-webauth (0.2) unstable; urgency=low
 
