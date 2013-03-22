@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from distutils.core import setup
 
 
 # Idea borrowed from http://cburgmer.posterous.com/pip-requirementstxt-and-setuppy
@@ -15,7 +15,7 @@ setup(
     description="WebAuth/LDAP integration for Django",
     author='Oxford University Computing Services',
     author_email='infodev@oucs.ox.ac.uk',
-    version='0.3',
+    version='0.3.1',
     license='BSD',
     url='https://github.com/oucs/django-webauth',
     long_description=open('README.rst').read(),
@@ -26,7 +26,8 @@ setup(
                  'Operating System :: OS Independent',
                  'Programming Language :: Python',
                  'Topic :: Internet :: WWW/HTTP :: Dynamic Content'],
-    packages=find_packages(),
+    package_data = {'django_webauth': ['templates/webauth/*']},
+    packages=('django_webauth',),
     install_requires=install_requires,
     dependency_links=dependency_links,
 )
