@@ -6,21 +6,25 @@ class WebauthBackend(object):
     # Create a User object if not already in the database?
     create_unknown_user = True
 
-    # Overridden so that backend matching by parameters works as expected
-    # (and so we don't get in the way of other authentication schemes)
+    # If there's no WebauthUser, but a user with the right cleaned username,
+    # setting this to True will link the created WebauthUser to the existing
+    # user. If False, an error will be raised.
+    link_to_existing_users = True
+
     def authenticate(self, webauth_username):
         try:
-            webauth_user = WebauthUser.objects.get(webauth_username=webauth_username)
+            return User.objects.get(webauth__username=webauth_username)
         except WebauthUser.DoesNotExist:
             if self.create_unknown_user:
                 username = self.clean_username(webauth_username)
-                user = User.objects.create(username=username)
+                if self.link_to_existing_users:
+                    user, _ = User.objects.get_or_create(username=username)
+                else:
+                    user = User.objects.create(username=username)
                 webauth_user = WebauthUser.objects.create(user=user,
-                                                          webauth_username=webauth_username)
+                                                          username=webauth_username)
                 self.configure_user(user, webauth_username)
-            else:
-                return None
-        return webauth_user.user
+            return user
 
     def clean_username(self, username):
         """

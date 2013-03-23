@@ -12,9 +12,8 @@ if WEBAUTH_USER_SOURCE:
     @receiver(user_logged_in)
     def user_logged_in_handler(sender, request, user, **kwargs):
         try:
-            webauth_user = user.webauth_user_set.get()
+            webauth_username = user.webauth.username
         except WebauthUser.DoesNotExist:
             pass
         else:
-            webauth_username = webauth_user.webauth_username
             provision_user_details(user, webauth_username)
