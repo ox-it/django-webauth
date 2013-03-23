@@ -8,7 +8,7 @@ from ..conf import WEBAUTH_LDAP_ENDPOINT
 
 logger = logging.getLogger(__name__)
 
-def provision_user_details(user):
+def provision_user_details(user, webauth_username):
     auth = ldap.sasl.gssapi('')
     oakldap = ldap.initialize(WEBAUTH_LDAP_ENDPOINT)
     oakldap.start_tls_s()
@@ -16,7 +16,7 @@ def provision_user_details(user):
 
     results = oakldap.search_s('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
                                ldap.SCOPE_SUBTREE,
-                               '(oakPrincipal=krbPrincipalName=%s@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk)' % user.username)
+                               '(oakPrincipal=krbPrincipalName=%s@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk)' % webauth_username)
 
     if not results:
         return None
@@ -29,7 +29,7 @@ def provision_user_details(user):
             setattr(user, name, person[key][0])
         except KeyError:
             setattr(user, name, '')
-            logger.warning("User %s doesn't have a %s", user.username, key)
+            logger.warning("User %s doesn't have a %s", webauth_username, key)
 
     user.groups = _get_groups(user, person)
 

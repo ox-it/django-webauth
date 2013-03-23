@@ -1,8 +1,5 @@
 from django.conf import settings
 
-WEBAUTH_PROVISIONED_GROUP = getattr(settings, 'WEBAUTH_PROVISIONED_GROUP'
-                                    'webauth-provisioned')
-
 WEBAUTH_LDAP_ENDPOINT = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
                                 'ldap://ldap.oak.ox.ac.uk:389')
 

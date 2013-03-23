@@ -5,8 +5,8 @@ from requests_kerberos import HTTPKerberosAuth
 
 from ..conf import WEBAUTH_CUD_ENDPOINT
 
-def provision_user_details(user):
-    query = {'q': 'cud\:cas\:sso_username:%s' % user.username,
+def provision_user_details(user, webauth_username):
+    query = {'q': 'cud\:cas\:sso_username:%s' % webauth_username,
             'format': 'json',
             'history': 'n',
             }
