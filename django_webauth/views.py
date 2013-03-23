@@ -11,11 +11,11 @@ class LoginView(HTMLView):
     redirect_field_name = REDIRECT_FIELD_NAME
 
     def get(self, request):
-        username = request.META.get('REMOTE_USER')
-        if not username:
+        webauth_user = request.META.get('REMOTE_USER')
+        if not webauth_user:
             raise ImproperlyConfigured('This view is supposed to set a REMOTE_USER environment variable')
 
-        user = authenticate(username=username)
+        user = authenticate(webauth_user=webauth_user)
         login(request, user)
 
         redirect_to = request.GET.get(self.redirect_field_name, '')
