@@ -12,7 +12,7 @@ for line in open('requirements.txt'):
 
 setup(
     name='django-webauth',
-    description="WebAuth/LDAP integration for Django",
+    description="Webauth, LDAP and CUD integration for Django",
     author='IT Services, University of Oxford',
     author_email='infodev@it.ox.ac.uk',
     version='0.3.2',
