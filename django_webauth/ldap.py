@@ -1,29 +1,34 @@
-import ldap
-import ldap.sasl
-import logging
-import re
-
 from django.conf import settings
-from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
 
-logger = logging.getLogger(__name__)
+if getattr(settings, 'WEBAUTH_LDAP_ENDPOINT', None):
+    import logging
+    import re
 
+    from django.contrib.auth.models import Group
+    from django.contrib.auth.signals import user_logged_in
+    from django.dispatch import receiver
 
-class WebauthLDAPBackend(object):
-    def __init__(self):
-        self.ldap_endpoint = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
-                'ldap://ldap.oak.ox.ac.uk:389')
+    import ldap
 
-    def authenticate(self, username):
-        user, _ = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
+    from .models import WebauthUser
+
+    logger = logging.getLogger(__name__)
+
+    @receiver(user_logged_in)
+    def user_logged_in_handler(sender, request, user, **kwargs):
+        try:
+            webauth_username = user.webauth.username
+        except WebauthUser.DoesNotExist:
+            pass
+
         auth = ldap.sasl.gssapi('')
-        oakldap = ldap.initialize(self.ldap_endpoint)
+        oakldap = ldap.initialize(settings.WEBAUTH_LDAP_ENDPOINT)
         oakldap.start_tls_s()
         oakldap.sasl_interactive_bind_s('', auth)
 
-        results = oakldap.search_s('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
+        results = oakldap.search_s(settings.WEBAUTH_LDAP_BASE,
                                    ldap.SCOPE_SUBTREE,
-                                   '(oakPrincipal=krbPrincipalName=%s@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk)' % username)
+                                   settings.WEBAUTH_LDAP_FILTER_PATTERN.format(user=user))
 
         if not results:
             return None
@@ -34,16 +39,15 @@ class WebauthLDAPBackend(object):
                           ('email', 'mail')):
             try:
                 setattr(user, name, person[key][0])
-            except KeyError, e:
+            except KeyError:
                 setattr(user, name, '')
-                logger.warning("User %s doesn't have a %s", username, key)
+                logger.warning("User %s doesn't have a %s", webauth_username, key)
 
-        user.groups = self.get_groups(user, person)
+        user.groups = _get_groups(user, person)
 
         user.save()
-        return user
 
-    def get_groups(self, user, person):
+    def _get_groups(self, user, person):
         groups = set('status:%s' % s for s in person['oakStatus'])
         for g in person.get('oakITSSFor', ()):
             match = re.match(r'oakGN=ITSS,oakUnitCode=(\w+),ou=units,dc=oak,dc=ox,dc=ac,dc=uk', g)
@@ -63,10 +67,3 @@ class WebauthLDAPBackend(object):
             groups.add('member')
 
         return set(Group.objects.get_or_create(name=name)[0] for name in groups)
-
-    def get_user(self, user_id):
-        try:
-            return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return None
-
