@@ -3,7 +3,7 @@ import requests
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
-from requests.auth import HTTPKerberosAuth
+from requests_kerberos import HTTPKerberosAuth
 
 
 logger = logging.getLogger(__name__)

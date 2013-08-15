@@ -1,3 +1,4 @@
 django-conneg>=0.6
-requests==0.14.1
+requests==1.2.3
+requests-kerberos==0.3
 kerberos==1.1.1
