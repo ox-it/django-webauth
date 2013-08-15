@@ -12,18 +12,19 @@ logger = logging.getLogger(__name__)
 class WebauthCUDBackend(object):
     def __init__(self):
         self.cud_endpoint = getattr(settings, 'WEBAUTH_CUD_ENDPOINT',
-                "https://ws.cud.ox.ac.uk/cudws/rest/search")
+                                    "https://ws.cud.ox.ac.uk/cudws/rest/search")
 
     def authenticate(self, username):
-        user, created = User.objects.get_or_create(username=username, defaults={'password': UNUSABLE_PASSWORD})
+        user, created = User.objects.get_or_create(username=username,
+                                                   defaults={'password': UNUSABLE_PASSWORD})
         if created:
             logger.info("Created user: (%s - id:%s)" % (username, user.id))
         else:
             logger.info("User logged in: (%s - id:%s)" % (username, user.id))
         query = {'q': 'cud\:cas\:sso_username:%s' % username,
-                'format': 'json',
-                'history': 'n',
-                }
+                 'format': 'json',
+                 'history': 'n',
+                 }
         cud_data = requests.get(self.cud_endpoint, params=query, auth=HTTPKerberosAuth()).json
         assert len(cud_data['cudSubjects']) == 1
         subject = cud_data['cudSubjects'][0]
