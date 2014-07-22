@@ -26,8 +26,8 @@ setup(
                  'Operating System :: OS Independent',
                  'Programming Language :: Python',
                  'Topic :: Internet :: WWW/HTTP :: Dynamic Content'],
-    package_data = {'django_webauth': ['templates/webauth/*']},
-    packages=('django_webauth', 'django_webauth.backends'),
+    package_data={'django_webauth': ['templates/webauth/*']},
+    packages=('django_webauth',),
     install_requires=install_requires,
     dependency_links=dependency_links,
 )

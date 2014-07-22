@@ -17,7 +17,7 @@ Add the following to your urlconf::
 
     url(r'^webauth/', include('django_webauth.urls', 'webauth')),
 
-Add ``'django_webauth.backends.WebathBackend'`` to your list of ``AUTHENTICATION_BACKENDS``.
+Add ``'django_webauth.backends.WebauthLDAP'`` to your list of ``AUTHENTICATION_BACKENDS``.
 
 To link to the Webauth views from your templates use ``webauth:login`` and ``webauth:logout`` for url names.
 

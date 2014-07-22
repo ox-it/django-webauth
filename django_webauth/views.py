@@ -2,12 +2,18 @@ import urlparse
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth import authenticate, login, logout, BACKEND_SESSION_KEY, REDIRECT_FIELD_NAME
+from django.contrib.auth import (authenticate, login, logout,
+                                 BACKEND_SESSION_KEY, REDIRECT_FIELD_NAME)
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.views.generic.base import View
 
-from django_conneg.views import HTMLView
-from django_conneg.http import HttpResponseSeeOther
 
-class LoginView(HTMLView):
+class HttpResponseSeeOther(HttpResponseRedirect):
+    status_code = 303
+
+
+class LoginView(View):
     redirect_field_name = REDIRECT_FIELD_NAME
 
     def get(self, request):
@@ -27,12 +33,11 @@ class LoginView(HTMLView):
 
         return HttpResponseSeeOther(redirect_to)
 
-class LogoutView(HTMLView):
-    def get(self, request):
-        context = {
-            'was_webauth': request.session.get(BACKEND_SESSION_KEY) == 'django_webauth.backends.WebauthBackend',
-            'login_redirect_url': settings.LOGIN_REDIRECT_URL,
-        }
-        logout(request)
-        return self.render(request, context, 'webauth/logged_out')
 
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return render(request, 'webauth/logged_out', {
+            'was_webauth': request.session.get(BACKEND_SESSION_KEY) == 'django_webauth.backends.WebAuthLDAP',
+            'login_redirect_url': settings.LOGIN_REDIRECT_URL,
+        })
