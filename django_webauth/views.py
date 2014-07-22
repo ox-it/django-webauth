@@ -7,7 +7,6 @@ from django.contrib.auth import (authenticate, login, logout,
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.base import View
-from django.template import RequestContext
 
 
 class HttpResponseSeeOther(HttpResponseRedirect):
@@ -37,9 +36,8 @@ class LoginView(View):
 
 class LogoutView(View):
     def get(self, request):
-        context = RequestContext(request, {
+        logout(request)
+        return render(request, 'webauth/logged_out', {
             'was_webauth': request.session.get(BACKEND_SESSION_KEY) == 'django_webauth.backends.WebAuthLDAP',
             'login_redirect_url': settings.LOGIN_REDIRECT_URL,
         })
-        logout(request)
-        return render(request, 'webauth/logged_out', context_instance=context)
