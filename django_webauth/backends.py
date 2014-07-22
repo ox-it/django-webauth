@@ -10,7 +10,7 @@ from django.contrib.auth.models import User, Group
 logger = logging.getLogger(__name__)
 
 
-class WebauthLDAPBackend(object):
+class WebauthLDAP(object):
     def __init__(self):
         self.ldap_endpoint = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
                 'ldap://ldap.oak.ox.ac.uk:389')
@@ -72,4 +72,3 @@ class WebauthLDAPBackend(object):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-
