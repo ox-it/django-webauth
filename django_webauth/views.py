@@ -19,7 +19,10 @@ class LoginView(View):
     def get(self, request):
         username = request.META.get('REMOTE_USER')
         if not username:
-            raise ImproperlyConfigured('This view is supposed to set a REMOTE_USER environment variable')
+            #get the username if mod_proxy is running in front of django as configured in README.rst
+            username = request.META.get('HTTP_X_WEBAUTH_USER')
+            if not username:   
+                raise ImproperlyConfigured('This view is supposed to set a REMOTE_USER environment variable')
 
         user = authenticate(username=username)
         login(request, user)
