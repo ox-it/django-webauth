@@ -11,6 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 class WebauthLDAP(object):
+    # regex to match all groups that this backend manages. Other groups will
+    # be left alone, but group memberships matching this pattern will be
+    # wipied out if the user is no longer supposed to be a member.
+    managed_groups_re = re.compile(r'^(itss$|member$|itss:|affiliation:|status:)')
+
     def __init__(self):
         self.ldap_endpoint = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
                 'ldap://ldap.oak.ox.ac.uk:389')
@@ -51,7 +56,9 @@ class WebauthLDAP(object):
         return user
 
     def get_groups(self, user, person):
-        groups = set('status:%s' % s for s in person['oakStatus'])
+        # Start with existing non-managed groups
+        groups = set(g for g in user.groups if not self.managed_groups_re.match(g))
+        groups |= set('status:%s' % s for s in person['oakStatus'])
         for g in person.get('oakITSSFor', ()):
             match = re.match(r'oakGN=ITSS,oakUnitCode=(\w+),ou=units,dc=oak,dc=ox,dc=ac,dc=uk', g)
             if match:
