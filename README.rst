@@ -2,8 +2,7 @@ django-webauth
 ==============
 
 This core was pulled out of an OUCS project, and has not undergone much testing
-beyond its current use. Comments to `infodev@oucs.ox.ac.uk
-<mailto:infodev@oucs.ox.ac.uk>`_.
+beyond its current use. Comments to infodev@oucs.ox.ac.uk.
 
 Usage
 -----
