@@ -1,3 +1,10 @@
+python-django-webauth (0.4) unstable; urgency=low
+
+  * LogoutView working properly
+  * No longer clobbers unmanaged groups
+
+ -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Tue, 6 Jan 2015 15:36:43 +0000
+
 python-django-webauth (0.3.2) unstable; urgency=low
 
   * Templates now being distrubuted by setup.py
