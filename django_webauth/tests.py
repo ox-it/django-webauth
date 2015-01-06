@@ -42,7 +42,6 @@ class DjangoWebauthTestCase(TestCase):
         user = self.backend.authenticate(self.username)
         self.assertTrue(user.is_authenticated())
 
-    @unittest.expectedFailure
     def testExistingGroupsPreserved(self):
         user = User.objects.create_user(self.username)
         group = Group.objects.create(name='scientists')
