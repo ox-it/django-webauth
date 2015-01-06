@@ -27,4 +27,4 @@ AUTHENTICATION_BACKENDS = (
     'django_webauth.backends.WebauthLDAP',
 )
 
-ROOT_URLCONF = 'django_webauth.test_site.urls'
+ROOT_URLCONF = 'django_webauth.urls'
