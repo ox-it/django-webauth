@@ -52,7 +52,6 @@ class DjangoWebauthTestCase(TestCase):
         user = self.backend.authenticate(self.username)
         self.assertIn(group, user.groups.all())
 
-    @unittest.expectedFailure
     def testLogoutView(self):
         # assert to make sure we're logged in
         self.assertTrue(self.client.login(username=self.username))
