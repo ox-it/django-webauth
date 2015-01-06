@@ -1,6 +1,8 @@
 django-webauth
 ==============
 
+.. image:: https://travis-ci.org/ox-it/django-webauth.png
+
 This core was pulled out of an OUCS project, and has not undergone much testing
 beyond its current use. Comments to infodev@oucs.ox.ac.uk.
 
