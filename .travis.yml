@@ -1,0 +1,12 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls mock
+  - python -c "import enum" 2&>1 > /dev/null || pip install enum34
+script: PYTHONPATH=. coverage run --source=. `which django-admin.py` test django_webauth.tests --settings=django_webauth.test_site.settings
+after_script:
+  - coveralls
