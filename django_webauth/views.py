@@ -5,8 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import (authenticate, login, logout,
                                  BACKEND_SESSION_KEY, REDIRECT_FIELD_NAME)
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 
 
 class HttpResponseSeeOther(HttpResponseRedirect):
@@ -33,11 +32,14 @@ class LoginView(View):
 
         return HttpResponseSeeOther(redirect_to)
 
+class LogoutView(TemplateView):
+    template_name = 'webauth/logged_out.html'
 
-class LogoutView(View):
     def get(self, request):
-        logout(request)
-        return render(request, 'webauth/logged_out', {
-            'was_webauth': request.session.get(BACKEND_SESSION_KEY) == 'django_webauth.backends.WebAuthLDAP',
+        context = {
+            'was_webauth': request.session.get(BACKEND_SESSION_KEY) == 'django_webauth.backends.WebauthLDAP',
             'login_redirect_url': settings.LOGIN_REDIRECT_URL,
-        })
+        }
+        logout(request)
+        return self.render_to_response(context)
+
