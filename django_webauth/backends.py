@@ -57,7 +57,7 @@ class WebauthLDAP(object):
 
     def get_groups(self, user, person):
         # Start with existing non-managed groups
-        groups = set(g for g in user.groups if not self.managed_groups_re.match(g))
+        groups = set(g.name for g in user.groups.all() if not self.managed_groups_re.match(g.name))
         groups |= set('status:%s' % s for s in person['oakStatus'])
         for g in person.get('oakITSSFor', ()):
             match = re.match(r'oakGN=ITSS,oakUnitCode=(\w+),ou=units,dc=oak,dc=ox,dc=ac,dc=uk', g)
