@@ -1,4 +1,4 @@
-import urlparse
+import urllib.parse
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -24,7 +24,7 @@ class LoginView(View):
         login(request, user)
 
         redirect_to = request.GET.get(self.redirect_field_name, '')
-        netloc = urlparse.urlparse(redirect_to)[1]
+        netloc = urllib.parse.urlparse(redirect_to)[1]
         if not redirect_to:
             redirect_to = settings.LOGIN_REDIRECT_URL
         elif netloc and netloc != request.get_host():

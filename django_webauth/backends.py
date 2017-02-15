@@ -1,5 +1,4 @@
-import ldap
-import ldap.sasl
+import ldap3
 import logging
 import re
 
@@ -20,21 +19,21 @@ class WebauthLDAP(object):
         self.ldap_endpoint = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
                 'ldap://ldap.oak.ox.ac.uk:389')
 
-    def get_ldap_client(self):
-        auth = ldap.sasl.gssapi('')
-        ldap_client = ldap.initialize(self.ldap_endpoint)
-        ldap_client.start_tls_s()
-        ldap_client.sasl_interactive_bind_s('', auth)
-        return ldap_client
+    def get_ldap_connection(self):
+        return ldap3.Connection(self.url,
+                                auto_bind=ldap3.AUTO_BIND_TLS_BEFORE_BIND,
+                                authentication=ldap3.SASL,
+                                sasl_mechanism='GSSAPI',
+                                sasl_credentials=(True,))
 
     def authenticate(self, username):
         user, created = User.objects.get_or_create(username=username)
         if created:
             user.set_unusable_password()
 
-        ldap_client = self.get_ldap_client()
+        ldap_client = self.get_ldap_connection()
         results = ldap_client.search_s('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
-                                       ldap.SCOPE_SUBTREE,
+                                       ldap3.SUBTREE,
                                        '(oakPrincipal=krbPrincipalName=%s@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk)' % username)
 
         if not results:
@@ -46,7 +45,7 @@ class WebauthLDAP(object):
                           ('email', 'mail')):
             try:
                 setattr(user, name, person[key][0])
-            except KeyError, e:
+            except KeyError as e:
                 setattr(user, name, '')
                 logger.warning("User %s doesn't have a %s", username, key)
 
