@@ -16,7 +16,7 @@ class WebauthLDAP(object):
     managed_groups_re = re.compile(r'^(itss$|member$|itss:|affiliation:|status:)')
 
     def __init__(self):
-        self.ldap_endpoint = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
+        self.url = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
                 'ldap://ldap.oak.ox.ac.uk:389')
 
     def get_ldap_connection(self):
