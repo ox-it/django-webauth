@@ -14,6 +14,8 @@ class WebauthLDAP(object):
     # be left alone, but group memberships matching this pattern will be
     # wipied out if the user is no longer supposed to be a member.
     managed_groups_re = re.compile(r'^(itss$|member$|itss:|affiliation:|status:)')
+    person_filter_pattern = \
+        '(oakPrincipal=krbPrincipalName={}@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk)'
 
     def __init__(self):
         self.url = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
@@ -32,9 +34,9 @@ class WebauthLDAP(object):
             user.set_unusable_password()
 
         ldap_client = self.get_ldap_connection()
-        results = ldap_client.search_s('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
-                                       ldap3.SUBTREE,
-                                       '(oakPrincipal=krbPrincipalName=%s@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk)' % username)
+        results = ldap_client.search('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
+                                     self.person_filter_pattern.format(username),
+                                     search_scope=ldap3.SUBTREE)
 
         if not results:
             return None
