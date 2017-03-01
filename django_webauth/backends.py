@@ -34,13 +34,13 @@ class WebauthLDAP(object):
             user.set_unusable_password()
 
         ldap_client = self.get_ldap_connection()
-        results = ldap_client.search('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
-                                     self.person_filter_pattern.format(username),
-                                     search_scope=ldap3.SUBTREE)
+        ldap_client.search('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
+                           self.person_filter_pattern.format(username),
+                           search_scope=ldap3.SUBTREE)
 
-        if not results:
+        if not ldap_client.response:
             return None
-        person = results[0][1]
+        person = ldap_client.response[0]['attributes']
 
         for name, key in (('first_name', 'givenName'),
                           ('last_name', 'sn'),
