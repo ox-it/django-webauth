@@ -19,7 +19,7 @@ class WebauthLDAP(object):
 
     def __init__(self):
         self.url = getattr(settings, 'WEBAUTH_LDAP_ENDPOINT',
-                'ldap://ldap.oak.ox.ac.uk:389')
+                'ldaps://ldap.oak.ox.ac.uk')
 
     def get_ldap_connection(self):
         return ldap3.Connection(self.url,
