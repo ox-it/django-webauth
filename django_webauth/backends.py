@@ -36,7 +36,8 @@ class WebauthLDAP(object):
         ldap_client = self.get_ldap_connection()
         ldap_client.search('ou=people,dc=oak,dc=ox,dc=ac,dc=uk',
                            self.person_filter_pattern.format(username),
-                           search_scope=ldap3.SUBTREE)
+                           search_scope=ldap3.SUBTREE,
+                           attributes=ldap3.ALL_ATTRIBUTES)
 
         if not ldap_client.response:
             return None
