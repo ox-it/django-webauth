@@ -23,6 +23,7 @@ class WebauthLDAP(object):
 
     def get_ldap_connection(self):
         return ldap3.Connection(self.url,
+                                user=getattr(settings, 'WEBAUTH_LDAP_USER', None),
                                 auto_bind=ldap3.AUTO_BIND_TLS_BEFORE_BIND,
                                 authentication=ldap3.SASL,
                                 sasl_mechanism='GSSAPI',
